@@ -1,0 +1,105 @@
+
+import React, { useState }  from "react";
+import { NavLink } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { Navigate } from "react-router-dom";
+
+
+export  const LoginPage = () =>{
+  const [password,setpassword] = useState("");
+  const [email,setemail] = useState("");
+  const [logged,setlogged] = useState(false);
+
+
+    const handleSubmit = async(e)=>{
+        e.preventDefault();
+           const response = await fetch("http://localhost:5003/login",{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({email,password})
+           })
+
+          const data = await response.json();
+          if(response.ok){
+            console.log("data fetched sucessfully");
+            toast.success("login successfull");
+            setlogged(true);
+
+          }
+
+          
+        
+          else{
+            console.log("fetching the data from backend was unsucessfull");
+            toast.error("login failed");
+            return
+          }
+    }
+
+    if(logged === true){
+            return <Navigate  to={"/homepage"}/>
+          }
+
+    
+
+    return(
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+  <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+    <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+      Sign in to your account
+    </h2>
+
+    <form className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-600">Email</label>
+        <input
+          type="email"
+          placeholder="you@example.com"
+          className="mt-1 w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          value={email}
+          onChange={(e)=>setemail(e.target.value)}
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-600">Password</label>
+        <input
+          type="password"
+          placeholder="••••••••"
+          className="mt-1 w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+           value={password}
+          onChange={(e)=>setpassword(e.target.value)}
+        />
+      </div>
+
+      <div className="flex items-center justify-between text-sm text-gray-600">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="h-4 w-4 rounded" />
+          <span>Remember me</span>
+        </label>
+        <NavLink to={"/forgotpassword"} className="text-indigo-600 hover:underline">Forgot?</NavLink>
+      </div>
+
+      <button
+        type="submit" onClick={handleSubmit}
+        className="w-full py-2 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 transition"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <div className="mt-6 text-center text-sm text-gray-600">
+      Don't have an account?{" "}
+      <NavLink to="/registerpage" className="text-indigo-600 font-medium hover:underline">
+        Register
+      </NavLink>
+    </div>
+    <ToastContainer position="top-center"/>
+  </div>
+</div>
+
+
+    )
+}
